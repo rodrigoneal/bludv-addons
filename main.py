@@ -6,13 +6,27 @@ from selenium_tools.selenium_driver import SeleniumDriver
 from src import limpar_dados
 from src.pages.pages import AbrirFilme, DadosFilme, Index
 from src.schemas.movie_schema import Filmes, LinkTorrent, VersaoFilme
-from urls import urls
+from db import db_collection
 
 contador = count()
 
+
 driver = SeleniumDriver()
 
+movies = []
+series = []
 
+urls = open("links.txt").readlines()
+urls = set(urls)
+
+for url in urls:
+    url = url.replace("\n", "")
+    if "temporada" in url:
+        series.append(url)
+    else:
+        movies.append(url)
+
+breakpoint()
 url_principal = "https://bludvfilmes.tv"
 index = Index(driver)
 abrir_filme = AbrirFilme(driver, url=url_principal)
@@ -24,9 +38,10 @@ filmes = Filmes()
 for _ in range(10):
     if index.abrir_pagina.esta_aberta(url=url_principal):
         break
-for url in urls:
+for url in open("links.txt").readlines():
     if "temporada" in url:
         continue
+    url = url.replace("\n", "")
     abrir_filme.url = url
     abrir_filme.open()
     filme = dados_filme.pegar_dados.informacoes_filme()
@@ -47,4 +62,5 @@ for url in urls:
         contador = count()
     for versao in versoes_filme:
         filme.versao_filme.append(versao)
+    db_collection.insert_one(filme.dict())
     filmes.filme.append(filme)

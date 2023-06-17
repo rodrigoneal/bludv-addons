@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium_tools.page_objects import Element
 
 from src import limpar_dados
-from src.schemas.movie_schema import Filme
+from src.schemas.movie_schema import Filme, Genero
 
 
 class AbrirPagina(Element):
@@ -33,6 +33,10 @@ class PegarDados(Element):
     genero = (By.XPATH, "//em[contains(text(),'Gênero')]/ancestor::span")
     qualidade_audio = (By.XPATH, "//em[contains(text(),'Qualidade de Áudio')]/ancestor::span")
     qualidade_video = (By.XPATH, "//em[contains(text(),'Qualidade de Áudio')]/ancestor::span")
+    lancamento = (By.XPATH, "//em[contains(text(),'Lançamento')]/ancestor::span")
+    poster = (By.XPATH, "//span/img")
+    imdb = (By.XPATH, "//a[contains(@href, 'imdb')]")
+    sinopse = (By.XPATH, "//span[contains(text(),'SINOPSE')]/ancestor::p")
     versoes_filme = (By.XPATH, "//center")
 
 
@@ -41,19 +45,29 @@ class PegarDados(Element):
         genero = self.find_element(self.genero).text
         qualidade_audio = self.find_element(self.qualidade_audio).text
         qualidade_video = self.find_element(self.qualidade_video).text
+        imdb_id = self.find_element(self.imdb).get_attribute("href")
+        imdb_nota = self.find_element(self.imdb).text
+        lancamento = self.find_element(self.lancamento).text
+        poster = self.find_element(self.poster).get_attribute("src")
+        sinopse = self.find_element(self.sinopse).text
 
 
         titulo = limpar_dados.remover_texto_titulo(titulo)
         genero = limpar_dados.transformar_genero(genero)
         qualidade_audio = limpar_dados.limpar_video_e_audio(qualidade_audio)
         qualidade_video = limpar_dados.limpar_video_e_audio(qualidade_video)
+        id_imdb = limpar_dados.pegar_id_imdb(imdb_id)
+        imdb_nota = limpar_dados.limpar_nota_imdb(imdb_nota)
+        lancamento = limpar_dados.limpar_lancamento(lancamento)
+        sinopse = limpar_dados.limpar_sinopse(sinopse)
 
 
-
-        return Filme(titulo=titulo, genero=genero,
-                    qualidade_audio=qualidade_audio,
-                    qualidade_video=qualidade_video)
-
+        genero = Genero(genero=genero)
+        return Filme(titulo=titulo, generos=genero,
+                        qualidade_audio=qualidade_audio,
+                        qualidade_video=qualidade_video,
+                        id_imdb=id_imdb, lancamento=lancamento,
+                        poster=poster,sinopse=sinopse)
     def dados_download_filme(self) -> Iterable[str]:
         versoes = self.find_elements(self.versoes_filme)
         for versao in versoes:
