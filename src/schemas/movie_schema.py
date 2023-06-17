@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class LinkTorrent(BaseModel):
     qualidade_torrent: str
-    link_torrent: str
+    link_torrent: str | None
 
 
 class VersaoFilme(BaseModel):

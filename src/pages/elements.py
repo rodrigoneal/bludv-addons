@@ -41,33 +41,48 @@ class PegarDados(Element):
 
 
     def informacoes_filme(self) -> Filme:
-        titulo = self.find_element(self.titulo).text
-        genero = self.find_element(self.genero).text
-        qualidade_audio = self.find_element(self.qualidade_audio).text
-        qualidade_video = self.find_element(self.qualidade_video).text
-        imdb_id = self.find_element(self.imdb).get_attribute("href")
-        imdb_nota = self.find_element(self.imdb).text
-        lancamento = self.find_element(self.lancamento).text
-        poster = self.find_element(self.poster).get_attribute("src")
-        sinopse = self.find_element(self.sinopse).text
-
+        titulo = self.find_element(self.titulo,
+                                    time=2).text
+        genero = self.find_element(self.genero,
+                                   time=2).text
+        qualidade_audio = self.find_element(self.qualidade_audio,
+                                            time=2).text
+        qualidade_video = self.find_element(self.qualidade_video,
+                                            time=2).text
+        imdb_id = self.find_element(self.imdb,
+                                    time=2).get_attribute("href")
+        imdb_nota = self.find_element(self.imdb,
+                                      time=2).text
+        lancamento = self.find_element(self.lancamento,
+                                       time=2).text
+        poster = self.find_element(self.poster,
+                                   time=2).get_attribute("src")
+        sinopse = self.find_element(self.sinopse,
+                                    time=2).text
 
         titulo = limpar_dados.remover_texto_titulo(titulo)
         genero = limpar_dados.transformar_genero(genero)
         qualidade_audio = limpar_dados.limpar_video_e_audio(qualidade_audio)
         qualidade_video = limpar_dados.limpar_video_e_audio(qualidade_video)
         id_imdb = limpar_dados.pegar_id_imdb(imdb_id)
-        imdb_nota = limpar_dados.limpar_nota_imdb(imdb_nota)
+        nota_imbd = limpar_dados.limpar_nota_imdb(imdb_nota)
         lancamento = limpar_dados.limpar_lancamento(lancamento)
         sinopse = limpar_dados.limpar_sinopse(sinopse)
 
 
         genero = Genero(genero=genero)
+        try:
+            float(nota_imbd)
+        except ValueError:
+            nota_imbd = None
+
         return Filme(titulo=titulo, generos=genero,
-                        qualidade_audio=qualidade_audio,
-                        qualidade_video=qualidade_video,
-                        id_imdb=id_imdb, lancamento=lancamento,
-                        poster=poster,sinopse=sinopse)
+                    qualidade_audio=qualidade_audio,
+                    qualidade_video=qualidade_video,
+                    id_imdb=id_imdb, lancamento=lancamento,
+                    poster=poster,sinopse=sinopse,
+                    nota_imbd=nota_imbd)
+
     def dados_download_filme(self) -> Iterable[str]:
         versoes = self.find_elements(self.versoes_filme)
         for versao in versoes:

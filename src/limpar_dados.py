@@ -29,8 +29,12 @@ def limpar_qualidade_torrent(text: str) -> str:
     return re.sub(r"\(\d+\.\d+\s*[GgMm][Bb]\)", "", _dado)
 
 def limpar_link_torrent(text: str) -> str:
-    magnet = re.match(r"magnet:\?xt=urn:btih:[a-zA-Z0-9]+", text)
-    return magnet.group()
+    if text:
+        match = re.search(r"magnet:\?xt=urn:btih:[a-zA-Z0-9]+", text)
+        if match:
+            return match.group()
+    else:
+        return None
 
 def pegar_id_imdb(text: str) -> str:
     padrao = r"\/title\/([a-z0-9]+)\/"
@@ -48,4 +52,8 @@ def limpar_nota_imdb(text: str) -> str:
     return text.replace(",", ".")
 
 def limpar_sinopse(text: str) -> str:
-    return text.replace("SINOPSE:", "").strip()
+    padrao = r"(?<=,).*"
+    match = re.search(padrao, text)
+    if match:
+        return match.group().strip()
+    
