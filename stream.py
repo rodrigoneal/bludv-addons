@@ -5,25 +5,22 @@ from functools import wraps
 from flask import Flask, Response, abort, jsonify, url_for
 
 MANIFEST = {
-    'id': 'org.stremio.helloworldPython',
-    'version': '1.0.0',
+    'id': 'org.stremio.bludv',
+    'version': '0.0.1',
 
-    'name': 'Hello World Python Addon',
-    'description': 'Sample addon made with Express providing a few public domain movies',
+    'name': 'BluDV Catalog Addon',
+    'description': 'Um fork dos videos da site bludv',
 
-    'types': ['movie', 'series'],
+    'types': ['movie'],
 
     'catalogs': [
-            {'type': 'movie', 'id': 'Hello, Python'},
-            {'type': 'series', 'id': 'Hello, Python'}
+            {'type': 'movie', 'id': 'movies'},
     ],
 
     'resources': [
         'catalog',
-        # The meta call will be invoked only for series with ID starting with hpy
-        {'name': "meta", 'types': ["series"], 'idPrefixes': ["hpy"]},
         {'name': 'stream', 'types': [
-            'movie', 'series'], 'idPrefixes': ['tt', 'hpy']}
+            'movie'], 'idPrefixes': ['tt']}
     ]
 }
 

@@ -2,28 +2,22 @@ from pydantic import BaseModel
 
 
 class LinkTorrent(BaseModel):
-    qualidade_torrent: str
-    link_torrent: str | None
+    title: str
+    infoHash: str | None
 
-
-class VersaoFilme(BaseModel):
-    versao: str
-    links: list[LinkTorrent] = []
-
-class Genero(BaseModel):
-    genero: list[str] = []
 
 class Filme(BaseModel):
-    titulo: str
-    generos: Genero = []
+    name: str
+    genres: list[str] = []
     qualidade_audio: int
     qualidade_video: int
-    id_imdb: str | None
-    nota_imbd: float | None
-    sinopse: str | None
-    poster: str
-    lancamento: int
-    versao_filme: list[VersaoFilme] = []
+    id: str | None
+    imdbRating: str | None
+    description: str | None
+    logo: str | None
+    releaseInfo: int
+    runtime: str | None
+    versao_filme: list[LinkTorrent] = []
 
 class Filmes(BaseModel):
     filme: list[Filme] = []

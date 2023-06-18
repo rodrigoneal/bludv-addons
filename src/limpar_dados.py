@@ -1,6 +1,8 @@
 import re
 
-from src.pages.translate import translate_gen
+from src.translate import translate_gen
+
+import datetime
 
 
 def remover_texto_titulo(text: str)-> str:
@@ -22,17 +24,25 @@ def limpar_video_e_audio(text: str) -> int:
     return int(qualidade)
 
 def limpar_versao(text: str) -> str:
-    return text.replace("VERSÃO ", "")
+    regex = re.compile(r"(?i)\b(dual|dublado)\b")
+    if regex.search(text.lower()):
+        return "dublado"
+    else:
+        return "legendado"
+    
 
 def limpar_qualidade_torrent(text: str) -> str:
-    _dado = text.replace("\nMAGNET-LINK", "").replace("SERVIDOR PARA DOWNLOAD ", "")
-    return re.sub(r"\(\d+\.\d+\s*[GgMm][Bb]\)", "", _dado)
+    padrao = r"\d+p\b"
+    match = re.search(padrao, text)
+    if match:
+        return match.group(0)
 
 def limpar_link_torrent(text: str) -> str:
+    padrao = r"\?xt=urn:btih:([^&]+)"
     if text:
-        match = re.search(r"magnet:\?xt=urn:btih:[a-zA-Z0-9]+", text)
+        match = re.search(padrao, text)
         if match:
-            return match.group()
+            return match.group(1)
     else:
         return None
 
@@ -48,12 +58,37 @@ def limpar_lancamento(text: str)-> str:
     if match:
         return match.group()
 
-def limpar_nota_imdb(text: str) -> str:
-    return text.replace(",", ".")
-
 def limpar_sinopse(text: str) -> str:
     padrao = r"(?<=,).*"
     match = re.search(padrao, text)
     if match:
         return match.group().strip()
-    
+
+def limpar_poster(text: str)-> str:
+
+    if text:
+        padrao = r"\/([^\/]+)\.jpg"
+        match = re.search(padrao, text)
+        if match:
+            return match.group(1)
+    return None
+       
+
+def limpar_duracao(text: str) -> str:
+    padrao_hora = r'(\d+) H'
+    padrao_minuto = r'(\d+) Min'
+    match_hora = re.search(padrao_hora, text)
+    match_min = re.search(padrao_minuto, text)
+    if match_hora:
+        hora = int(match_hora.group(1))
+    else:
+        hora = 0
+    if match_min:
+        min = int(match_min.group(1))
+    else:
+        min = 0
+    duracao = datetime.timedelta(hours=hora, minutes=min)
+    return f"{round(duracao.total_seconds() / 60)}m"
+
+
+
