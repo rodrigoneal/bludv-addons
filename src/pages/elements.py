@@ -1,14 +1,16 @@
 from time import sleep
-from typing import Iterable
+
 
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium_tools.page_objects import Element
 from selenium.webdriver.support.relative_locator import locate_with
+from selenium.common.exceptions import JavascriptException
 
 from src import limpar_dados
-from src.schemas.movie_schema import Filme, LinkTorrent
+from src.db.models import Bludv
+
 
 
 class AbrirPagina(Element):
@@ -41,10 +43,11 @@ class PegarDados(Element):
     sinopse = (By.XPATH, "//span[contains(text(),'SINOPSE')]/ancestor::p")
     qualidade_torrent = (By.XPATH, "//em[contains(text(), 'SERVIDOR')] ") 
     versao_torrent = (By.XPATH, "//preceding::strong[contains(text(), 'VERSÃO')]")
-    # versoes_filme = (By.XPATH, "//center")
+    atualizacao = (By.XPATH, "//div[2]/div[1]/div[1]/div")
 
 
-    def informacoes_filme(self) -> Filme:        
+    def informacoes_filme(self) -> Filme:
+
         torrents = self.find_elements(self.qualidade_torrent)
         titulo = self.find_element(self.titulo,time=2).text
         genero = self.find_element(self.genero,time=2).text
@@ -62,17 +65,33 @@ class PegarDados(Element):
                                    time=2).get_attribute("src")
         sinopse = self.find_element(self.sinopse,time=2).text
         duracao = self.find_element(self.duracao).text
-
+        atualizacao = self.find_element(self.atualizacao)
         links_torrent = []
-        for num, torrent in enumerate(torrents):
+
+        try:
+            torrents_link = [torrent for torrent in self.execute_script(f"return arrDBLinks") if torrent.startswith("magnet")]
+        except JavascriptException:
+            sleep(2)
+            torrents_link = [torrent for torrent in self.execute_script(f"return arrDBLinks") if torrent.startswith("magnet")]
+        torrents_hash = limpar_dados.limpar_link_torrent(torrents_link)
+        atualizado = limpar_dados.limpar_atualizacao(atualizacao.get_attribute("innerHTML"))
+        sub_index = 0
+        for index, torrent in enumerate(torrents):  
             resolucao_filme = limpar_dados.limpar_qualidade_torrent(torrent.text)
             _linguagem = self.driver.find_element(locate_with(*self.versao_torrent).above(torrent))
             linguagem = limpar_dados.limpar_versao(_linguagem.text)
-            _torrent_hash = self.driver.execute_script(f"return getLinkDB({num})")
-            torrent_hash = limpar_dados.limpar_link_torrent(_torrent_hash)
-            title = linguagem +" "+ resolucao_filme
-            links_torrent.append(LinkTorrent(title=title, infoHash=torrent_hash))
 
+            title = linguagem +" "+ resolucao_filme
+            if "BREVE" in torrent.text.upper():
+                infohash = None
+                sub_index += 1
+            else:
+                try:
+                    infohash = torrents_hash[index - sub_index]["hash"]
+                except IndexError:
+                    infohash = None
+        
+            links_torrent.append(LinkTorrent(title=title, infoHash=infohash))
         name = limpar_dados.remover_texto_titulo(titulo)
         genres = limpar_dados.transformar_genero(genero)
         qualidade_audio = limpar_dados.limpar_video_e_audio(qualidade_audio)
@@ -92,10 +111,6 @@ class PegarDados(Element):
                     id=id, releaseInfo=releaseInfo,
                     logo=logo,description=description,
                     imdbRating=imdbRating,
-                    runtime=runtime, versao_filme=links_torrent)
-
-
-
-    def pegar_link_torrent(self, num: int) -> str:
-        return self.driver.execute_script(f"return getLinkDB({num})")
-
+                    runtime=runtime, 
+                    versao_filme=links_torrent,
+                    atualizado=atualizado)

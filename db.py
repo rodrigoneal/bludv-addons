@@ -1,12 +1,8 @@
 from pymongo import MongoClient
 
-from src.schemas.movie_schema import Filme
+def get_db(db_name: str):
+    client = MongoClient('localhost', 27017)
+    db = client["bludv"]
+    return db[db_name]
 
-
-client = MongoClient('localhost', 27017)
-db = client["bludv"]
-db_collection = db["movies"]
-cursores = db_collection.find({})
-Filme
-breakpoint()
 

@@ -7,12 +7,20 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-selenium-tools = {git = "https://github.com/digital-path/selenium_tools"}
 pydantic = "^1.10.9"
 deep-translator = "^1.11.1"
 flask = "^2.3.2"
-sqlalchemy = "^2.0.16"
 pymongo = "^4.3.3"
+black = "^23.3.0"
+bencoding = "^0.2.6"
+httpx = "^0.24.1"
+fastapi = "^0.97.0"
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+motor = "^3.1.2"
+beanie = "^1.19.2"
+cinemagoer = "^2023.5.1"
+bencode-py = "^4.0.0"
+pytest = "^7.3.2"
 
 
 [tool.poetry.group.lint.dependencies]

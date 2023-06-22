@@ -1,15 +1,17 @@
+from typing import Generator
+
+
 movies = []
 series = []
 
 urls = open("links.txt").readlines()
 
-def urls_filmes() -> list[str]:
+def urls_filmes() -> Generator:
     for url in urls:
-        url = url.replace("\n", "")
         if "temporada" not in url:
+            url = url.replace("\n", "") 
             if url not in movies:
-                movies.append(url)
-    return movies
+                yield url
 
 def urls_serie() -> list[str]:
     for url in urls:
