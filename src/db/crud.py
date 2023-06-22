@@ -4,8 +4,8 @@ from uuid import uuid4
 
 from imdb import Cinemagoer, IMDbDataAccessError
 
-from src.schemas import schemas
 from src.db.models import Bludv
+from src.schemas import schemas
 
 ia = Cinemagoer()
 

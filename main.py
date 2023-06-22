@@ -1,12 +1,9 @@
 from selenium_tools.selenium_driver import SeleniumDriver
 from tqdm import tqdm
 
-
 from src.download.urls import urls_filmes
 from src.pages.pages import AbrirFilme, DadosFilme, Index
 from src.usecases.movies_cases import insert_movie
-
-
 
 movies = urls_filmes()
 

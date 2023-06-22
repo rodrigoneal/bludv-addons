@@ -1,12 +1,11 @@
-import re
 import asyncio
+import datetime
+import re
 
 import httpcore
-
-from src.translate import translate_gen
 import httpx
 
-import datetime
+from src.translate import translate_gen
 
 
 def remover_texto_titulo(text: str) -> str:

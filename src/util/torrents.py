@@ -1,9 +1,12 @@
 
 
-
 import base64
 import binascii
+from collections import namedtuple
 from urllib.parse import parse_qs, urlparse
+
+TorrentInfo = namedtuple('TorrentInfo', ['infohash', 'trackers', 'name'])
+
 
 def magnet_to_valida_torrent(magnet_torrent: str) -> str:
     url = urlparse(magnet_torrent)
@@ -20,11 +23,4 @@ def magnet_to_valida_torrent(magnet_torrent: str) -> str:
     name = url_query.get("dn")
     if name:
         name = name[0]
-        
-    return infohash, trackers, name
-
-
-url = "magnet:?xt=urn:btih:MHQQZDRDRSLMRUM2QDMFHSIKK5DAEMR2&dn=Avatar%20-%20O%20Caminho%20da%20%C3%81gua%202022%20WEB-DL%201080p%20x264%20DUAL%207.1&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce"
-
-hash = magnet_to_valida_torrent(url)
-breakpoint()
+    return TorrentInfo(infohash=infohash, trackers=trackers, name=name)

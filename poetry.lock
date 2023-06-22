@@ -1074,6 +1074,21 @@ files = [
 cli = ["click (>=5.0)"]
 
 [[package]]
+name = "python-qbittorrent"
+version = "0.4.3"
+description = "Python wrapper for qBittorrent >4.1.x"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-qbittorrent-0.4.3.tar.gz", hash = "sha256:4e22cf89890628b054a60aa4bd1161a68c2b0fad48ef0886fa4d325e69d3828a"},
+    {file = "python_qbittorrent-0.4.3-py3-none-any.whl", hash = "sha256:dc2583226b69916ab96735537abd7696acc52e02e2d4d7afd10fa976f10d3aaa"},
+]
+
+[package.dependencies]
+requests = "*"
+
+[[package]]
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
@@ -1277,6 +1292,39 @@ files = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
     {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
 ]
+
+[[package]]
+name = "torrent-parser"
+version = "0.4.1"
+description = "A .torrent file parser and creator for both Python 2 and 3"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "torrent_parser-0.4.1-py2.py3-none-any.whl", hash = "sha256:5ed270e925b955681ef29e5addb8554f91b61206c374cf910fd3273d73304fe3"},
+    {file = "torrent_parser-0.4.1.tar.gz", hash = "sha256:c6dc285fa51101f82ee319dbf8bae1f40d3285efb44ed931c9117f8b5c4a0cee"},
+]
+
+[[package]]
+name = "tqdm"
+version = "4.65.0"
+description = "Fast, Extensible Progress Meter"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tqdm-4.65.0-py3-none-any.whl", hash = "sha256:c4f53a17fe37e132815abceec022631be8ffe1b9381c2e6e30aa70edc99e9671"},
+    {file = "tqdm-4.65.0.tar.gz", hash = "sha256:1871fb68a86b8fb3b59ca4cdd3dcccbc7e6d613eeed31f4c332531977b89beb5"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+dev = ["py-make (>=0.1.0)", "twine", "wheel"]
+notebook = ["ipywidgets (>=6)"]
+slack = ["slack-sdk"]
+telegram = ["requests"]
 
 [[package]]
 name = "typing-extensions"
@@ -1515,4 +1563,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "beb30be70481b295fb7f3df6b13ae6514e2b6999a953894bbad2a4df2753ad04"
+content-hash = "93d6d5f02b9741a468364ec7edbbfa1e6b738c034d6baf7dead2b3104cf3c6d7"

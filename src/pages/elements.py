@@ -1,16 +1,14 @@
 from time import sleep
 
-
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.common.exceptions import (JavascriptException, TimeoutException,
+                                        WebDriverException)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium_tools.page_objects import Element
 from selenium.webdriver.support.relative_locator import locate_with
-from selenium.common.exceptions import JavascriptException
+from selenium_tools.page_objects import Element
 
 from src import limpar_dados
 from src.db.models import Bludv
-
 
 
 class AbrirPagina(Element):

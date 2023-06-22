@@ -1,7 +1,6 @@
 import httpx
 
-from src.util.scraper import (_parser_url, posts_passados,
-                              pegar_informacoes)
+from src.util.scraper import _parser_url, pegar_informacoes, posts_passados
 
 
 def test_se_passando_0_url_nao_tera_paginacao():
