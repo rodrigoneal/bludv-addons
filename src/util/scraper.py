@@ -19,8 +19,3 @@ def pegar_informacoes(html_page: str, buscar_texto: str):
     soup = BeautifulSoup(html_page, 'html.parser')
     strong_tag = soup.find('strong', string=buscar_texto)
     return strong_tag.next_sibling.strip()
-
-
-def generate_url():
-    for i in range(500):
-        ...
