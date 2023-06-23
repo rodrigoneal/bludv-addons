@@ -13,7 +13,7 @@ class Bludv(Document):
     type: str
     season: Optional[int]
     episode: Optional[str]
-    poster: str
+    poster: Optional[str]
     imdb_id: Optional[str]
     bludv_id: Optional[str]
     created_at: datetime = Field(default_factory=datetime.now)

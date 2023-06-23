@@ -1,12 +1,14 @@
 import asyncio
 import itertools
-import re
 from typing import Any, Generator
+from bs4 import BeautifulSoup
 
 from tqdm import tqdm
 import httpx
 
-from extrair_informacao import posts_passados
+from extrair_informacao import pegar_imdb, pegar_informacoes, pegar_links_torrent, pegar_temporada, pegar_title_torrent, posts_passados, tipo_video
+
+from imdb import Cinemagoer
 
 
 base_url: str = "https://bludvfilmes.tv/lancamento/2023/{}"
@@ -36,6 +38,20 @@ def _posts_to_tqdm(posts):
     _total = list(itertools.chain.from_iterable(posts))
     return len(_total)
 
+def happy_path(page_html: bytes):
+    soup = BeautifulSoup(page_html, 'html.parser')
+    name = pegar_informacoes(soup, "Título Original:")
+    type = tipo_video(soup)
+    links = pegar_links_torrent(soup)
+    imdb_id = pegar_imdb(soup)
+    for link in links:
+        season = pegar_temporada(link.name)["season"]
+        episode = pegar_temporada(link.name)["episode"]
+        hash = link.infohash
+        catalog = pegar_title_torrent(link.name)
+        breakpoint()
+
+
 async def main():
     posts_links = [post_link(link) for link in generator_link()]
     async with httpx.AsyncClient() as client:
@@ -45,6 +61,8 @@ async def main():
         with tqdm(total=total) as pbar:
             for pages in iter_posts(posts):
                 htmls = await asyncio.gather(*[scraper(client, page) for page in pages])
+                for html in htmls:
+                    imdb_link = happy_path(html)
                 pbar.update(4)
                 await asyncio.sleep(0.5)
 
