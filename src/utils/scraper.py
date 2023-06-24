@@ -1,6 +1,6 @@
 import asyncio
-from datetime import datetime
 import itertools
+from datetime import datetime
 from typing import Any, Generator
 from uuid import uuid4
 
@@ -8,10 +8,10 @@ import httpx
 from bs4 import BeautifulSoup
 from imdb import Cinemagoer, IMDbDataAccessError
 from tqdm import tqdm
+
 from src.db import database
 from src.db.crud import save_movie_metadata
 from src.logger import get_logger
-
 from src.utils import extrair_informacao
 from src.utils.torrents import listar_episodios
 
@@ -131,5 +131,3 @@ async def run_schedule_scrape():
     async with httpx.AsyncClient() as client:
         response = await scraper(client, url)
         [await save_movie_metadata(metadata) for metadata in gerar_metadata(response)]
-
-

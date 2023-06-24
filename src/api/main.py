@@ -1,16 +1,15 @@
 import json
 import logging
 from typing import Literal
-import emoji
 
+import emoji
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from fastapi import FastAPI, Request, Response, BackgroundTasks
+from fastapi import BackgroundTasks, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-
+from src.db import crud, database
 from src.schemas import schemas
-from src.db import database, crud
 from src.utils import scraper
 
 
