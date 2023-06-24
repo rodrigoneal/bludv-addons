@@ -126,3 +126,10 @@ async def main():
                     [await save_movie_metadata(metadata) for metadata in gerar_metadata(html)]
                 pbar.update(NUM_REQUEST)
                 await asyncio.sleep(0.5)
+async def run_schedule_scrape():
+    url = "https://bludvfilmes.tv/lancamento/2023/"
+    async with httpx.AsyncClient() as client:
+        response = await scraper(client, url)
+        [await save_movie_metadata(metadata) for metadata in gerar_metadata(response)]
+
+
