@@ -11,6 +11,7 @@ def get_logger(log_name, verbose=True):
                    level="DEBUG",
                    backtrace=False,
                    diagnose=True)
+        
         # if verbose:
         #     logger.add(sink=stderr,
         #             format="{time:DD-MM-YYYY at HH:mm:ss} | {name}:{function} | {level} | {message}",
