@@ -1,5 +1,6 @@
 import json
 import logging
+from pathlib import Path
 from typing import Literal
 
 import emoji
@@ -38,8 +39,9 @@ def replace_emoji(match):
     code_point = match.group(0).encode().decode('unicode-escape')
     return emoji.emojize(code_point, use_aliases=True)
 
+path = Path("src/resources/manifest.json")
 
-with open("resources/manifest.json") as file:
+with open(path) as file:
     # Função personalizada para substituir a sequência de escape pela representação do emoji
 
     # Substituir a sequência de escape Unicode pela representação do emoji
