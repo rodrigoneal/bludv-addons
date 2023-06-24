@@ -2,12 +2,12 @@ import re
 
 from bs4 import BeautifulSoup
 
-from torrents import TorrentInfo, magnet_to_valida_torrent
+from src.utils.torrents import TorrentInfo, magnet_to_valida_torrent
 
 
 def pegar_imdb(soup: BeautifulSoup) -> str | None:
     padrao = re.compile(r"(tt\d+)")
-    imdb_link = soup.find("a", href=lambda href: href and "imdb" in href)
+    imdb_link = soup.find("a", href=lambda href: href and "imdb.com/title" in href)
     if imdb_link:
         href = imdb_link.get("href")
         return re.search(padrao, href).group(1)
@@ -15,7 +15,7 @@ def pegar_imdb(soup: BeautifulSoup) -> str | None:
 
 
 def é_dublado(text: str) -> bool:
-    padrao = re.compile(r"\b(DUAL|DUBLADO|PT-BR)\b",
+    padrao = re.compile(r"\b(DUAL|DUBLADO|PT-BR|PORTUGUESE)\b",
                         re.IGNORECASE)
     match = re.search(padrao, text)
     if match:
@@ -32,10 +32,15 @@ def pegar_temporada(text: str):
     episodio = None
     padrao_episodio = re.compile(
         r"(S|T)(\d{2})(E)(\d{2})", flags=re.IGNORECASE)
+    padrao_sem_epidosio = r"S(\d+)"
     match = re.search(padrao_episodio, text)
     if match:
         temporada = int(match.group(2))
         episodio = int(match.group(4))
+    else:
+        match = re.search(padrao_sem_epidosio, text)
+        if match:
+            temporada = int(match.group(1))
     return {"season": temporada, "episode": episodio}
 
 
@@ -48,17 +53,26 @@ def pegar_links_torrent(soup: BeautifulSoup) -> list[TorrentInfo]:
 
 def pegar_title_torrent(link: str) -> str:
     name = link
-    idioma = "&#127482;&#127480;"
+    idioma = "\U0001F1EC\U0001F1E7"
     if é_dublado(name):
-        idioma = "&#127463;&#127479;"
+        idioma = "\U0001F1E7\U0001F1F7"
     name = name.replace(".", " ")
     return informacao_video(name=name, idioma=idioma)
 
-def pegar_poster(page_html: bytes):
-    soup = BeautifulSoup(page_html, 'html.parser')
+def pegar_resolucao_video(text: str) -> str:
+    text = text.replace(".", " ")
+    padrao = r"\d+[Kk]\s|\d{3,4}[Pp]\s"
+    match = re.search(padrao, text)
+    if match:
+        return match.group(0).strip()
+    return ""
+
+
+
+def pegar_poster(soup: BeautifulSoup):
     div_content = soup.find("div", class_="content")
     img_tag = div_content.find("img")
-    return img_tag.get("src")
+    return img_tag.get("data-src")
 
 
 def posts_passados(page_html) -> list[str]:
@@ -70,7 +84,7 @@ def tipo_video(soup: BeautifulSoup):
     link_series = div_category.find("a", text="Séries")
     if link_series:
         return "series"
-    return "movies"
+    return "movie"
 
 def pegar_informacoes(soup: BeautifulSoup, buscar_texto: str):
     strong_tag = soup.find('strong', string=buscar_texto)

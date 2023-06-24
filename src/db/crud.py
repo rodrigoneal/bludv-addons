@@ -5,12 +5,13 @@ from uuid import uuid4
 from imdb import Cinemagoer, IMDbDataAccessError
 
 from src.db.models import Bludv
+from src.logger import get_logger
 from src.schemas import schemas
 
 ia = Cinemagoer()
+logger = get_logger("bludv")
 
-
-async def get_movies_meta(catalog: str, skip: int = 0, limit: int = 100):
+async def get_meta(catalog: str,skip: int = 0, limit: int = 100):
     movies_meta = []
     movies = (
         await Bludv.find(Bludv.catalog == catalog)
@@ -51,13 +52,12 @@ async def get_movie_streams(video_id: str):
 
     stream_data = []
     for movie_data in movies_data:
-        for name, info_hash in movie_data.video_qualities.items():
-            stream_data.append(
-                {
-                    "name": name,
-                    "infoHash": info_hash,
-                }
-            )
+        for video in movie_data.video_qualities:
+                stream_data.append(
+                    {
+                        **video
+                    }
+                )
 
     return stream_data
 
@@ -70,11 +70,11 @@ async def get_series_streams(video_id: str, season: int, episode: str):
     stream_data = []
     for series in series_data:
         if series.episode == episode and series.season == season:
-            for name, info_hash in series.video_qualities.items():
+            for video in series.video_qualities:
+
                 stream_data.append(
                     {
-                        "name": name,
-                        "infoHash": info_hash,
+                        **video
                     }
                 )
 
@@ -103,7 +103,7 @@ async def get_movie_meta(meta_id: str):
 
 
 async def get_series_meta(meta_id: str):
-    series_data = await get_movies_data(meta_id, video_type="series")
+    series_data = await get_movies_data(meta_id, video_type="serie")
     if not series_data:
         return {
             "meta": {
@@ -147,6 +147,7 @@ def search_imdb(title: str):
 
 
 async def save_movie_metadata(metadata: dict):
+    logger.info(f"Salvando >>> {metadata['type']}-{metadata['name']}")
     movie_data = await Bludv.find_one(
         Bludv.name == metadata["name"],
         Bludv.catalog == metadata["catalog"],
@@ -155,7 +156,9 @@ async def save_movie_metadata(metadata: dict):
     )
 
     if movie_data:
-        movie_data.video_qualities.update(metadata["video_qualities"])
+        for video in movie_data.video_qualities:
+            for meta in metadata["video_qualities"]:
+                video.update(meta)
         movie_data.created_at = metadata["created_at"]
         logging.info(f"update video qualities for {metadata['name']}")
     else:
@@ -170,14 +173,9 @@ async def save_movie_metadata(metadata: dict):
         if series_data:
             movie_data.bludv_id = series_data.bludv_id
             movie_data.imdb_id = series_data.imdb_id
-        else:
+        if not movie_data.imdb_id:
             imdb_id = search_imdb(movie_data.name)
-            if any(
-                [
-                    metadata["type"] == "series" and metadata["episode"].isdigit() and imdb_id,
-                    all([metadata["type"] == "movie", imdb_id]),
-                ]
-            ):
+            if any([metadata["type"] == "series" and metadata["episode"].isdigit() and imdb_id,all([metadata["type"] == "movie", imdb_id]),]):
                 movie_data.imdb_id = imdb_id
             else:
                 movie_data.bludv_id = f"tb{uuid4().fields[-1]}"

@@ -24,6 +24,8 @@ pytest = "^7.3.2"
 python-qbittorrent = "^0.4.3"
 torrent-parser = "^0.4.1"
 tqdm = "^4.65.0"
+loguru = "^0.7.0"
+emoji = "^2.5.1"
 
 
 [tool.poetry.group.lint.dependencies]

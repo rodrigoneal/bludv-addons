@@ -21,8 +21,10 @@ class Movie(BaseModel):
 
 
 class Stream(BaseModel):
-    name: str
+    name: str | None
     infoHash: str
+    description: str
+
 
 
 class Streams(BaseModel):

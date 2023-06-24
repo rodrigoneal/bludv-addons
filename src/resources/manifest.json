@@ -1,0 +1,35 @@
+{
+  "id": "rodrigoneal.addons.bludv",
+  "version": "1.4.0",
+  "name": "Bludv Stremio",
+  "contactEmail": "rodrigho2006@gmail",
+  "description": "Filmes e series dublados e legendados do melhor site de torrent do Brasil",
+  "logo": "https://www.bludvfilmes4k.net/wp-content/uploads/2021/07/logo.png",
+  "resources": [
+    "catalog",
+    {
+      "name": "stream",
+      "types": ["movie", "series"],
+      "idPrefixes": ["tt", "tb"]
+    },
+    {
+      "name": "meta",
+      "types": ["movie", "series"],
+      "idPrefixes": ["tt", "tb"]
+    }
+  ],
+  "types": ["movie", "series"],
+  "catalogs": [
+    {
+      "id": "bludv-movie",
+      "type": "movie",
+      "name": "Bludv Filmes"
+    },
+    {
+      "id": "bludv-series",
+      "type": "series",
+      "name": "Bludv Series"
+    }
+   
+  ]
+}
