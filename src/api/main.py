@@ -39,7 +39,7 @@ def replace_emoji(match):
     return emoji.emojize(code_point, use_aliases=True)
 
 
-with open(r"src\resources\manifest.json") as file:
+with open("resources/manifest.json") as file:
     # Função personalizada para substituir a sequência de escape pela representação do emoji
 
     # Substituir a sequência de escape Unicode pela representação do emoji
