@@ -6,7 +6,7 @@ from typing import Literal
 import emoji
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from fastapi import BackgroundTasks, FastAPI, Request, Response
+from fastapi import BackgroundTasks, FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.db import crud, database
@@ -113,16 +113,8 @@ async def get_stream(video_id: str, response: Response):
 
 @app.post("/scraper")
 def run_scraper(
-    background_tasks: BackgroundTasks,
-    language: Literal["tamil", "malayalam", "telugu",
-                      "hindi", "kannada", "english"] = "tamil",
-    video_type: Literal["hdrip", "tcrip", "dubbed", "series"] = "hdrip",
-    pages: int = 1,
-    start_page: int = 1,
-    is_scrape_home: bool = False,
-):
-    background_tasks.add_task(
-        scrap.run_scraper, language, video_type, pages, start_page, is_scrape_home)
+    background_tasks: BackgroundTasks):
+    background_tasks.add_task(scraper.main)
     return {"message": "Scraping in background..."}
 
 
