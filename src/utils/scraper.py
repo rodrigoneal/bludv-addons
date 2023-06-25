@@ -92,14 +92,12 @@ def gerar_metadata(page_html: bytes) -> Generator[dict[str, str | int | dict[str
     for link in links:
         if metadata["type"] == "series":
             metadata["catalog"] = "bludv-series"
-
         season = extrair_informacao.pegar_temporada(link.name)["season"]
         episode = extrair_informacao.pegar_temporada(link.name)["episode"]
         description = extrair_informacao.pegar_title_torrent(link.name)
         name = "          ".join(("Bludv", extrair_informacao.pegar_resolucao_video(link.name)))
         infoHash = link.infohash
         aux_dict[f"{season},{episode}"].append(dict(name=name, description=description, infoHash=infoHash))
-
     for k, v in aux_dict.items():
         season, episode = k.split(",")
         try:
