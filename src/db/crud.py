@@ -156,11 +156,14 @@ async def save_movie_metadata(metadata: dict):
     )
 
     if movie_data:
-        for video in movie_data.video_qualities:
-            for meta in metadata["video_qualities"]:
-                video.update(meta)
+        if movie_data.video_qualities == metadata["video_qualities"]:
+            logger.info(f"Qualidade do video inalterado")
+            return
+        else:
+            movie_data.video_qualities = metadata["video_qualities"]
+
         movie_data.created_at = metadata["created_at"]
-        logging.info(f"update video qualities for {metadata['name']}")
+        logger.info(f"Atualizando qualidade do video {metadata['name']}")
     else:
         movie_data = Bludv.parse_obj(metadata)
         movie_data.video_qualities = metadata["video_qualities"]

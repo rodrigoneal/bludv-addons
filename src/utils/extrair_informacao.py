@@ -17,7 +17,7 @@ def pegar_imdb(soup: BeautifulSoup) -> str | None:
 
 
 def é_dublado(text: str) -> bool:
-    padrao = re.compile(r"\b(DUAL|DUBLADO|PT-BR|PORTUGUESE)\b",
+    padrao = re.compile(r"\b(DUAL|DUBLADO|PT-BR|PORTUGUESE|NACIONAL)\b",
                         re.IGNORECASE)
     match = re.search(padrao, text)
     if match:

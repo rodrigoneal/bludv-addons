@@ -120,6 +120,7 @@ def pegar_serie(links, metadata):
             episodios = serie_sem_episodio(season=season, imdb_id=metadata["imdb_id"], name=name,
                                            description=description, infoHash=infoHash)
             for k, v in episodios.items():
+
                 aux_dict[k].append(v[0])
         else:
             aux_dict[f"{season},{episode}"].append(
@@ -162,6 +163,7 @@ def gerar_metadata(page_html: bytes) -> Generator[dict[str, str | int | dict[str
         try:
             dados_video = pegar_serie(links=links, metadata=metadata)
             for k, v in dados_video.items():
+
                 season, episode = k.split(",")
                 try:
                     metadata["season"] = int(season)
