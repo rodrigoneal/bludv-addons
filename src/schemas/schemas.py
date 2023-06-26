@@ -24,7 +24,7 @@ class Stream(BaseModel):
     name: str | None
     infoHash: str
     description: str
-    fileIdx: str | None
+    fileIdx: int | None
 
 
 
