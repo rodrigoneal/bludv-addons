@@ -87,10 +87,7 @@ def serie_sem_episodio(*, season, imdb_id, name, description, infoHash):
     for episode in episodios:
         _series[f"{season},{episode}"] = []
     for k in _series:
-        try:
-            season, episode = k.split(",")
-        except ValueError:
-            breakpoint()
+        season, episode = k.split(",")
         index = int(episode) - 1
         _series[f"{season},{episode}"].append(
             dict(name=name, description=description, infoHash=infoHash, fileIdx=index))
@@ -162,22 +159,30 @@ def gerar_metadata(page_html: bytes) -> Generator[dict[str, str | int | dict[str
     logger.info(f"Extraindo dados >> {metadata['name']}")
 
     if metadata["type"] == "series":
-        dados_video = pegar_serie(links=links, metadata=metadata)
-        for k, v in dados_video.items():
-            season, episode = k.split(",")
-            try:
-                metadata["season"] = int(season)
-            except ValueError:
-                metadata["season"] = None
-            metadata["episode"] = episode
-            metadata["video_qualities"] = v
-            yield metadata
+        try:
+            dados_video = pegar_serie(links=links, metadata=metadata)
+            for k, v in dados_video.items():
+                season, episode = k.split(",")
+                try:
+                    metadata["season"] = int(season)
+                except ValueError:
+                    metadata["season"] = None
+                metadata["episode"] = episode
+                metadata["video_qualities"] = v
+                yield metadata
+        except Exception as e:
+            logger.error(f"Erro <{e.__class__} - arg:{e}> ao pegar {metadata['name']}")
+            yield None
     else:
-        dados_videos = pegar_filme(links=links)
-        metadata["season"] = None
-        metadata["episode"] = None
-        metadata["video_qualities"] = dados_videos
-        yield metadata
+        try:
+            dados_videos = pegar_filme(links=links)
+            metadata["season"] = None
+            metadata["episode"] = None
+            metadata["video_qualities"] = dados_videos
+            yield metadata
+        except Exception as e:
+            logger.error(f"Erro <{e}> ao pegar {metadata['name']}")
+            yield None
 
 
 async def main():

@@ -147,6 +147,8 @@ def search_imdb(title: str):
 
 
 async def save_movie_metadata(metadata: dict):
+    if not metadata:
+        return
     logger.info(f"Salvando >>> {metadata['type']}-{metadata['name']}")
     movie_data = await Bludv.find_one(
         Bludv.name == metadata["name"],
