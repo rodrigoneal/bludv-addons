@@ -3,8 +3,8 @@
 import asyncio
 import base64
 import binascii
-from collections import namedtuple
 import functools
+from collections import namedtuple
 from urllib.parse import parse_qs, urlparse
 
 from imdb import Cinemagoer

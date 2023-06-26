@@ -7,6 +7,7 @@ from uuid import uuid4
 import httpx
 from bs4 import BeautifulSoup
 from imdb import Cinemagoer, IMDbDataAccessError
+from qbittorrent import Client
 from tqdm import tqdm
 
 from src.db import database
@@ -14,8 +15,6 @@ from src.db.crud import save_movie_metadata
 from src.logger import get_logger
 from src.utils import extrair_informacao
 from src.utils.torrents import listar_episodios
-
-from qbittorrent import Client
 
 base_url: str = "https://bludvfilmes.tv/lancamento/2023/{}"
 base_url = "https://bludvfilmes.tv/"
