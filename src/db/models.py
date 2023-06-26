@@ -17,6 +17,7 @@ class Bludv(Document):
     imdb_id: Optional[str]
     bludv_id: Optional[str]
     created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime | None
     video_qualities: list[dict]
 
     # class Settings:

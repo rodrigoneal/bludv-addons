@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 
 from bs4 import BeautifulSoup
@@ -7,7 +8,8 @@ from src.utils.torrents import TorrentInfo, magnet_to_valida_torrent
 
 def pegar_imdb(soup: BeautifulSoup) -> str | None:
     padrao = re.compile(r"(tt\d+)")
-    imdb_link = soup.find("a", href=lambda href: href and "imdb.com/title" in href)
+    imdb_link = soup.find(
+        "a", href=lambda href: href and "imdb.com/title" in href)
     if imdb_link:
         href = imdb_link.get("href")
         return re.search(padrao, href).group(1)
@@ -59,6 +61,7 @@ def pegar_title_torrent(link: str) -> str:
     name = name.replace(".", " ")
     return informacao_video(name=name, idioma=idioma)
 
+
 def pegar_resolucao_video(text: str) -> str:
     text = text.replace(".", " ")
     padrao = r"\d+[Kk]\s|\d{3,4}[Pp]\s"
@@ -66,7 +69,6 @@ def pegar_resolucao_video(text: str) -> str:
     if match:
         return match.group(0).strip()
     return ""
-
 
 
 def pegar_poster(soup: BeautifulSoup):
@@ -79,12 +81,33 @@ def posts_passados(page_html) -> list[str]:
     soup = BeautifulSoup(page_html, 'html.parser')
     return [loc.text for loc in soup.find_all("loc")]
 
-def tipo_video(soup: BeautifulSoup):
+
+def categoria_video(soup: BeautifulSoup):
+    categorias = ("Documentário", "Filmes",
+                  "Novela", "Anime", "Séries")
     div_category = soup.find("div", class_="category")
-    link_series = div_category.find("a", text="Séries")
-    if link_series:
+    for categoria in categorias:
+        if div_category.find("a", text=categoria):
+            return categoria.replace("á", "a").replace("é","e")
+
+def tipo_video(soup: BeautifulSoup)-> str:
+    categorias = soup.find("div", class_="category")
+    if "Filmes" in categorias.text:
+        return "movie"
+    else:
         return "series"
-    return "movie"
+
+
+def data_postagem(soup: BeautifulSoup) -> datetime:
+    padrao = r"\d{2}/\d{2}/\d{4}"
+    texto = soup.find("div", class_="icon").text
+    match = re.search(padrao, texto)
+    if match:
+        atualizado = match.group(0)
+        return datetime.strptime(atualizado,
+                                 "%d/%m/%Y")
+    return
+
 
 def pegar_informacoes(soup: BeautifulSoup, buscar_texto: str):
     strong_tag = soup.find('strong', string=buscar_texto)

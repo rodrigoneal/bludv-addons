@@ -15,7 +15,7 @@ async def get_meta(catalog: str,skip: int = 0, limit: int = 100):
     movies_meta = []
     movies = (
         await Bludv.find(Bludv.catalog == catalog)
-        .sort("-created_at")
+        .sort("-updated_at")
         .skip(skip)
         .limit(limit)
         .to_list()

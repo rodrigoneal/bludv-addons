@@ -7,6 +7,7 @@ import functools
 from collections import namedtuple
 from urllib.parse import parse_qs, urlparse
 
+
 from imdb import Cinemagoer
 
 TorrentInfo = namedtuple('TorrentInfo', ['infohash', 'trackers', 'name'])

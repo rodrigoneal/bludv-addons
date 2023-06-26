@@ -1,6 +1,6 @@
 {
   "id": "rodrigoneal.addons.bludv",
-  "version": "1.4.0",
+  "version": "0.1.4",
   "name": "Bludv Stremio",
   "contactEmail": "rodrigho2006@gmail",
   "description": "Filmes e series dublados e legendados do melhor site de torrent do Brasil",
@@ -21,7 +21,7 @@
   "types": ["movie", "series"],
   "catalogs": [
     {
-      "id": "bludv-movie",
+      "id": "bludv-filmes",
       "type": "movie",
       "name": "Bludv Filmes"
     },
@@ -29,7 +29,23 @@
       "id": "bludv-series",
       "type": "series",
       "name": "Bludv Series"
+    },
+    {
+      "id": "bludv-anime",
+      "type": "series",
+      "name": "Bludv Animes"
+    },
+    {
+      "id": "bludv-novela",
+      "type": "series",
+      "name": "Bludv Novelas"
+    },
+    {
+      "id": "bludv-documentario",
+      "type": "series",
+      "name": "Bludv Documentarios"
     }
+
    
   ]
 }
