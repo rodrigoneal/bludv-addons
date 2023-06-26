@@ -16,11 +16,8 @@ async def get_meta(catalog: str,skip: int = 0, limit: int = 100):
     movies = (
         await Bludv.find(Bludv.catalog == catalog)
         .sort("-updated_at")
-        .skip(skip)
-        .limit(limit)
         .to_list()
     )
-
     unique_names = []
 
     for movie in movies:
@@ -29,6 +26,7 @@ async def get_meta(catalog: str,skip: int = 0, limit: int = 100):
         if movie.name not in unique_names:
             movies_meta.append(meta_data)
             unique_names.append(movie.name)
+
     return movies_meta
 
 
