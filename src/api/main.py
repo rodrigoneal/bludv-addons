@@ -99,7 +99,7 @@ async def get_meta(meta_id: str, response: Response):
     return await crud.get_movie_meta(meta_id)
 
 
-@app.get("/stream/movie/{video_id}.json", response_model=schemas.Streams)
+@app.get("/stream/movie/{video_id}.json", response_model=schemas.Streams, response_model_exclude_none=True)
 async def get_stream(video_id: str, response: Response):
     response.headers.update(
         {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*"})
@@ -116,7 +116,7 @@ def run_scraper(
 
 
 @app.get("/meta/series/{meta_id}.json")
-async def get_series_meta(meta_id: str, response: Response):
+async def get_series_meta(meta_id: str, response: Response, response_model_exclude_none=True):
     response.headers.update(
         {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*"})
     return await crud.get_series_meta(meta_id)
