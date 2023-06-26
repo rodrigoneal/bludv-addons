@@ -103,7 +103,7 @@ async def get_movie_meta(meta_id: str):
 
 
 async def get_series_meta(meta_id: str):
-    series_data = await get_movies_data(meta_id, video_type="serie")
+    series_data = await get_movies_data(meta_id, video_type="series")
     if not series_data:
         return {
             "meta": {
