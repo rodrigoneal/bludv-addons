@@ -1,8 +1,10 @@
 
 
+import asyncio
 import base64
 import binascii
 from collections import namedtuple
+import functools
 from urllib.parse import parse_qs, urlparse
 
 from imdb import Cinemagoer
@@ -29,11 +31,18 @@ def magnet_to_valida_torrent(magnet_torrent: str) -> str:
         name = name[0]
     return TorrentInfo(infohash=infohash, trackers=trackers, name=name)
 
+def run_in_executor(f):
+    @functools.wraps(f)
+    def inner(*args, **kwargs):
+        loop = asyncio.get_running_loop()
+        return loop.run_in_executor(None, lambda: f(*args, **kwargs))
 
+    return inner
+
+@functools.lru_cache(maxsize=5)
 def listar_episodios(season: str, imdb_id: str):
     imdb = imdb_id.replace("tt", "")
     series = ia.get_movie(imdb)
     ia.update(series, 'episodes')
     sorted(series['episodes'].keys())
-    for episode in series['episodes'][season]:
-        yield season, episode, episode
+    return list(series['episodes'][season].keys())

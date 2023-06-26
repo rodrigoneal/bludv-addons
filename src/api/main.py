@@ -31,9 +31,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# app.mount("/static", StaticFiles(directory="resources"), name="static")
-# TEMPLATES = Jinja2Templates(directory="resources")
-
 
 def replace_emoji(match):
     code_point = match.group(0).encode().decode('unicode-escape')
@@ -114,7 +111,7 @@ async def get_stream(video_id: str, response: Response):
 @app.post("/scraper")
 def run_scraper(
     background_tasks: BackgroundTasks):
-    background_tasks.add_task(scraper.main)
+    background_tasks.add_task(scraper.run_schedule_scrape)
     return {"message": "Scraping in background..."}
 
 
