@@ -11,13 +11,10 @@ from src.schemas import schemas
 ia = Cinemagoer()
 logger = get_logger("bludv")
 
-async def get_meta(catalog: str,skip: int = 0, limit: int = 100):
+
+async def get_meta(catalog: str, skip: int = 0, limit: int = 100):
     movies_meta = []
-    movies = (
-        await Bludv.find(Bludv.catalog == catalog)
-        .sort("-updated_at")
-        .to_list()
-    )
+    movies = await Bludv.find(Bludv.catalog == catalog).sort("-updated_at").to_list()
     unique_names = []
 
     for movie in movies:
@@ -30,7 +27,9 @@ async def get_meta(catalog: str,skip: int = 0, limit: int = 100):
     return movies_meta
 
 
-async def get_movies_data(video_id: str, video_type: str = "movie") -> list[Optional[Bludv]]:
+async def get_movies_data(
+    video_id: str, video_type: str = "movie"
+) -> list[Optional[Bludv]]:
     if video_id.startswith("tt"):
         movie_data = await Bludv.find(
             Bludv.imdb_id == video_id, Bludv.type == video_type
@@ -51,11 +50,7 @@ async def get_movie_streams(video_id: str):
     stream_data = []
     for movie_data in movies_data:
         for video in movie_data.video_qualities:
-                stream_data.append(
-                    {
-                        **video
-                    }
-                )
+            stream_data.append({**video})
 
     return stream_data
 
@@ -69,12 +64,7 @@ async def get_series_streams(video_id: str, season: int, episode: str):
     for series in series_data:
         if series.episode == episode and series.season == season:
             for video in series.video_qualities:
-
-                stream_data.append(
-                    {
-                        **video
-                    }
-                )
+                stream_data.append({**video})
 
     return stream_data
 
@@ -158,7 +148,6 @@ async def save_movie_metadata(metadata: dict):
     if movie_data:
         if movie_data.video_qualities == metadata["video_qualities"]:
             logger.info(f"Qualidade do video inalterado")
-            return
         else:
             movie_data.video_qualities = metadata["video_qualities"]
 
@@ -178,11 +167,18 @@ async def save_movie_metadata(metadata: dict):
             movie_data.imdb_id = series_data.imdb_id
         if not movie_data.imdb_id:
             imdb_id = search_imdb(movie_data.name)
-            if any([metadata["type"] == "series" and metadata["episode"].isdigit() and imdb_id,all([metadata["type"] == "movie", imdb_id]),]):
+            if any(
+                [
+                    metadata["type"] == "series"
+                    and metadata["episode"].isdigit()
+                    and imdb_id,
+                    all([metadata["type"] == "movie", imdb_id]),
+                ]
+            ):
                 movie_data.imdb_id = imdb_id
             else:
                 movie_data.bludv_id = f"tb{uuid4().fields[-1]}"
 
         logging.info(f"new movie '{metadata['name']}' added.")
-
+    movie_data.updated_at = metadata["updated_at"]
     await movie_data.save()

@@ -27,6 +27,5 @@ class Stream(BaseModel):
     fileIdx: int | None
 
 
-
 class Streams(BaseModel):
     streams: list[Stream] | None = []

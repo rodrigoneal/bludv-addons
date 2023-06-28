@@ -7,27 +7,28 @@ from urllib.parse import parse_qs, urlparse
 
 from imdb import Cinemagoer
 
-TorrentInfo = namedtuple('TorrentInfo', ['infohash', 'trackers', 'name'])
+TorrentInfo = namedtuple("TorrentInfo", ["infohash", "trackers", "name"])
 
 ia = Cinemagoer()
 
 
-def magnet_to_valida_torrent(magnet_torrent: str) -> str:
+def magnet_to_valida_torrent(magnet_torrent: str) -> TorrentInfo:
     url = urlparse(magnet_torrent)
     url_query = parse_qs(url.query)
-    infohash = url_query["xt"][0].split(":")[2]
-    if len(infohash) == 40:
-        infohash = binascii.unhexlify(infohash)
-    elif len(infohash) == 32:
-        infohash = base64.b32decode(infohash)
+    hash = url_query["xt"][0].split(":")[2]
+    if len(hash) == 40:
+        bytes_hash = binascii.unhexlify(hash)
+    elif len(hash) == 32:
+        bytes_hash = base64.b32decode(hash)
     else:
         raise Exception("Unable to parse infohash")
-    infohash = binascii.hexlify(infohash).decode()
+    infohash = binascii.hexlify(bytes_hash).decode()
     trackers = url_query.get("tr", [])
     name = url_query.get("dn")
     if name:
         name = name[0]
     return TorrentInfo(infohash=infohash, trackers=trackers, name=name)
+
 
 def run_in_executor(f):
     @functools.wraps(f)
@@ -37,10 +38,11 @@ def run_in_executor(f):
 
     return inner
 
+
 @functools.lru_cache(maxsize=5)
 def listar_episodios(season: str, imdb_id: str):
     imdb = imdb_id.replace("tt", "")
     series = ia.get_movie(imdb)
-    ia.update(series, 'episodes')
-    sorted(series['episodes'].keys())
-    return list(series['episodes'][season].keys())
+    ia.update(series, "episodes")
+    sorted(series["episodes"].keys())
+    return list(series["episodes"][season].keys())
