@@ -167,7 +167,6 @@ def gerar_metadata(
     soup = BeautifulSoup(page_html, "html.parser")
     links = extrair_informacao.pegar_links_torrent(soup)
     categoria = extrair_informacao.categoria_video(soup)
-    breakpoint()
 
     metadata["catalog"] = "bludv-" + categoria.lower()
     metadata["type"] = extrair_informacao.tipo_video(soup)
